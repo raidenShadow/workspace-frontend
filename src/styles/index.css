@@ -1,24 +1,25 @@
 body {
-    background: linear-gradient(270deg, #68db28, #10797a, #104a7a, #107a3e);
+    background: linear-gradient(310deg, #000000, #1e2121);
     background-size: 800% 800%;
 
-    -webkit-animation: AnimatedGradient 18s ease infinite;
-    -moz-animation: AnimatedGradient 18s ease infinite;
-    animation: AnimatedGradient 18s ease infinite;
+    -webkit-animation: AnimatedGradient 30s ease infinite;
+    -moz-animation: AnimatedGradient 30s ease infinite;
+    animation: AnimatedGradient 30s ease infinite;
 }
 
+
 @-webkit-keyframes AnimatedGradient {
-    0%{background-position:0% 51%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 51%}
+    0%{background-position:0% 7%}
+    50%{background-position:100% 94%}
+    100%{background-position:0% 7%}
 }
 @-moz-keyframes AnimatedGradient {
-    0%{background-position:0% 51%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 51%}
+    0%{background-position:0% 7%}
+    50%{background-position:100% 94%}
+    100%{background-position:0% 7%}
 }
 @keyframes AnimatedGradient {
-    0%{background-position:0% 51%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 51%}
+    0%{background-position:0% 7%}
+    50%{background-position:100% 94%}
+    100%{background-position:0% 7%}
 }

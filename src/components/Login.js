@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import validator from 'validator';
 import { 
     Avatar, Button, CssBaseline, TextField,
@@ -7,6 +8,9 @@ import {
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { withStyles, makeStyles, ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import signupbg from '../assets/signupbg.jpg';
+import Cookies from 'universal-cookie';
+import { connect } from 'react-redux';
+import { fetchUser, isLoggedIn } from '../actions/userActions';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -49,30 +53,36 @@ const theme = createMuiTheme({
     }
 });
 
-const Login = () => {
+
+const Login = ({ fetchUser, history, activeUser, isLoggedIn }) => {
+    const cookies = new Cookies();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
-    const signIn = async () => {
-        console.log(email, password);
-        if (!validator.isEmail(email)) {
-            return;
+    
+    useEffect(() => {
+        isLoggedIn(cookies.get('Authorization'), userData => {
+            history.push({
+                pathname: '/home',
+                state: { userData }
+            });
+        });
+    }, []);
+    
+    const onSubmit = e => {
+        e.preventDefault();
+        const body = {
+            email,
+            password  
         }
-        const headers = new Headers();
-        headers.append('content-type', 'application/json');
-        const requestOptions = {
-            method: 'POST',
-            body: JSON.stringify({
-                email,
-                password
-            }),
-            redirect: 'follow',
-            headers
-        };
-        const response = await fetch("path", requestOptions);
-        const result = await response.json();
-    }
 
+        fetchUser(body, (token) => {
+            cookies.set('Authorization', `Bearer ${token}`, {
+                path: '/'
+            });
+            history.push("/home");
+        });
+        
+    }
     const classes = useStyles();
     return (
         <Grid container component="main" className={classes.root}>
@@ -130,6 +140,7 @@ const Login = () => {
                                 variant="contained"
                                 color="primary"
                                 className={classes.submit}
+                                onClick={onSubmit}
                             >
                                 Sign In
                             </Button>
@@ -140,7 +151,7 @@ const Login = () => {
                                     </Link>
                                 </Grid>
                                 <Grid item>
-                                    <Link className={classes.colorLink} href="#" variant="body2">
+                                    <Link className={classes.colorLink} href="/signup" variant="body2">
                                         {"Don't have an account? Sign Up"}
                                     </Link>
                                 </Grid>
@@ -153,4 +164,8 @@ const Login = () => {
     );
 }
 
-export default Login;
+Login.propTypes = {
+    fetchUser: PropTypes.func.isRequired
+};
+
+export default connect(null, { fetchUser, isLoggedIn })(Login);
