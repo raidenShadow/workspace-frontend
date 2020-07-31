@@ -57,7 +57,7 @@ export const isLoggedIn = (token, cb) => async dispatch => {
         },
         redirect: 'follow'
     };
-    const response = await fetch('http://localhost:8080/user/isloggedin', requestOptions);
+    const response = await fetch('http://localhost:8080/user/is-logged-in', requestOptions);
     if (response.status === 200) {
         const result = await response.json();
         dispatch({

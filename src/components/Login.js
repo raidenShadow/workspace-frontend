@@ -9,7 +9,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { withStyles, makeStyles, ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import signupbg from '../assets/signupbg.jpg';
 import Cookies from 'universal-cookie';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { fetchUser, isLoggedIn } from '../actions/userActions';
 
 const useStyles = makeStyles((theme) => ({
@@ -54,18 +54,23 @@ const theme = createMuiTheme({
 });
 
 
-const Login = ({ fetchUser, history, activeUser, isLoggedIn }) => {
+const Login = ({ history }) => {
+    const dispatch = useDispatch();
+    const activeUser = useSelector((state) => state.user.activeUser);
+    console.log(activeUser);
     const cookies = new Cookies();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     
     useEffect(() => {
-        isLoggedIn(cookies.get('Authorization'), userData => {
-            history.push({
-                pathname: '/home',
-                state: { userData }
-            });
-        });
+        dispatch(
+            isLoggedIn(cookies.get('Authorization'), userData => {
+                history.push({
+                    pathname: '/dashboard',
+                    state: { userData }
+                });
+            })
+        );
     }, []);
     
     const onSubmit = e => {
@@ -75,12 +80,14 @@ const Login = ({ fetchUser, history, activeUser, isLoggedIn }) => {
             password  
         }
 
-        fetchUser(body, (token) => {
-            cookies.set('Authorization', `Bearer ${token}`, {
-                path: '/'
-            });
-            history.push("/home");
-        });
+        dispatch(
+            fetchUser(body, (token) => {
+                cookies.set('Authorization', `Bearer ${token}`, {
+                    path: '/'
+                });
+                history.push("/dashboard");
+            })
+        );
         
     }
     const classes = useStyles();
@@ -168,4 +175,4 @@ Login.propTypes = {
     fetchUser: PropTypes.func.isRequired
 };
 
-export default connect(null, { fetchUser, isLoggedIn })(Login);
+export default Login;

@@ -13,7 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import { ThemeProvider, makeStyles, createMuiTheme } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Cookies from 'universal-cookie';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { registerUser, isLoggedIn } from '../actions/userActions';
 
 
@@ -49,7 +49,8 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const Register = ({ registerUser, history, isLoggedIn }) => {
+const Register = ({ history }) => {
+    const dispatch = useDispatch();
     const cookies = new Cookies();
     const classes = useStyles();
     const [fName, setFName] = useState('');
@@ -58,9 +59,9 @@ const Register = ({ registerUser, history, isLoggedIn }) => {
     const [password, setPassword] = useState('');
 
     useEffect(() => {
-        isLoggedIn(cookies.get('Authorization'), userData => {
-            history.push('/home', { userData });
-        });
+        dispatch(isLoggedIn(cookies.get('Authorization'), userData => {
+            history.push('/dashboard', { userData });
+        }));
     }, []);
 
     const onSubmit = e => {
@@ -71,12 +72,12 @@ const Register = ({ registerUser, history, isLoggedIn }) => {
             password
         };
 
-        registerUser(body, token => {
+        dispatch(registerUser(body, token => {
             cookies.set('Authorization', `Bearer ${token}`, {
                 path: '/'
             });
-            history.push("/home");
-        });
+            history.push("/dashboard");
+        }));
     }
 
     return (
@@ -167,4 +168,4 @@ const Register = ({ registerUser, history, isLoggedIn }) => {
     );
 }
 
-export default connect(null, { registerUser, isLoggedIn })(Register);
+export default Register;
