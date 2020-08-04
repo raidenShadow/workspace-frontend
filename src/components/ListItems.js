@@ -11,9 +11,13 @@ import ViewStreamIcon from '@material-ui/icons/ViewStream';
 import LayersIcon from '@material-ui/icons/Layers';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 
+
+const click = (e) => {
+    console.log("clicked");
+}
 export const mainListItems = (counter = 2) => (
     <div>
-        <ListItem button>
+        <ListItem button onClick={click}>
         <ListItemIcon>
             <DashboardIcon />
         </ListItemIcon>
