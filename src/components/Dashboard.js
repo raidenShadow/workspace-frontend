@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles, createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -17,11 +17,13 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import { mainListItems, secondaryListItems } from './ListItems';
-import Chart from './Chart';
-import Deposits from './Deposits';
-import Orders from './Orders';
-import Chat from './Chat/Chat';
+import { useDispatch, useSelector } from 'react-redux';
+import { isLoggedIn } from '../actions/userActions';
+import Cookies from 'universal-cookie';
+import _ from 'lodash';
 
+import Chat from './Chat/Chat';
+import socket from '../socket';
 
 const theme = createMuiTheme({
     palette: {
@@ -115,6 +117,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Dashboard() {
+    const dispatch = useDispatch();
+    const activeUser = useSelector(state => state.user.activeUser);
+    const cookies = new Cookies();
     const classes = useStyles();
     const [open, setOpen] = useState(true);
     const handleDrawerOpen = () => {
@@ -123,8 +128,17 @@ function Dashboard() {
     const handleDrawerClose = () => {
         setOpen(false);
     };
-    const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
+    useEffect(() => {
+        dispatch(
+            isLoggedIn(cookies.get('Authorization'))
+        );
+    }, []);
+    useEffect(() => {
+        if (!_.isEmpty(activeUser)) {
+            socket.emit('connected', activeUser._id);
+        }
+    }, [activeUser]);
     return (
         <ThemeProvider theme={theme}>
         <div className={classes.root}>

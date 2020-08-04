@@ -68,7 +68,7 @@ const registerUserFailed = err => ({
     payload: err
 });
 
-export const isLoggedInRequest = async(token, dispatch, cb) => {
+export const isLoggedInRequest = async(token, dispatch, cb = null) => {
     const requestOptions = {
         method: 'GET',
         headers: {
@@ -82,7 +82,9 @@ export const isLoggedInRequest = async(token, dispatch, cb) => {
         if (response.status !== 200) {
             throw new Error('Not logged in before');
         }
-        cb(result.user);
+        if (cb) {
+            cb(result.user);
+        }
         return dispatch(isLoggedInSuccess(result.user));
     } catch (err) {
         return dispatch(isLoggedInFailed(err));

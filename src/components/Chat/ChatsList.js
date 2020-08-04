@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { ListItem, ListItemAvatar, ListItemText, Avatar, Typography, Grid } from '@material-ui/core';
+import React, { useState, useEffect } from 'react';
+import { ListItem, ListItemAvatar, ListItemText, Avatar, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectChat } from '../../actions/chatActions';
@@ -17,7 +17,7 @@ const ChatsList = ({ filter }) => {
     const chatsList = useSelector(state => state.chat.chatsList);
     const [chats, setChats] = useState([]);
     const selectChatClick = ({ currentTarget: { title } }) => {
-        const found = chats.find(({ userName }) => userName.toLowerCase() === title.toLowerCase());
+        const found = chats.find(({ user: { userName } }) => userName.toLowerCase() === title.toLowerCase());
         dispatch(
             selectChat(found)
         );
@@ -42,16 +42,28 @@ const ChatsList = ({ filter }) => {
         const renderedList = [];
         for (const chat of chats) {
             renderedList.unshift(
-                <ListItem title={chat.userName} button={true} onClick={selectChatClick} className={classes.item} alignItems="flex-start">
+                <ListItem 
+                    title={chat.user.userName} 
+                    button={true} 
+                    onClick={selectChatClick} 
+                    className={classes.item} 
+                    alignItems="flex-start"
+                    >
                     <ListItemAvatar>
-                        <Avatar alt={chat.userName} src={chat.avatar} />
+                        <Avatar alt={chat.user.userName} src={chat.avatar} />
                     </ListItemAvatar>
                     <ListItemText
-                        primary={chat.userName}
+                        primary={
+                            <React.Fragment>
+                                <Typography noWrap={true}>
+                                    {chat.user.userName}
+                                </Typography>
+                            </React.Fragment>
+                        }
                         secondary={
                             <React.Fragment>
                                 <Typography noWrap={true}>
-                                    {chat.lastMessage}
+                                    {chat.latestMessage}
                                 </Typography>
                             </React.Fragment>
                         }
@@ -61,7 +73,6 @@ const ChatsList = ({ filter }) => {
         }
         return renderedList;
     }
-    
     return fillChatsList();
 };
 

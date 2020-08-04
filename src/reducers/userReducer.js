@@ -26,7 +26,7 @@ export default function (state = initialState, action) {
                 loading: false,
                 error: action.payload
             }
-        case types.ALREADY_LOGGEDIN_SUCCESS: 
+        case types.ALREADY_LOGGEDIN_SUCCESS:
             return {
                 ...state,
                 error: null,

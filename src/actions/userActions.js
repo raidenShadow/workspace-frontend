@@ -1,4 +1,3 @@
-import types from './types';
 import {
     registerUserStart, registerUserRequest, isLoggedInRequest, loginRequest
 } from '../middlewares/auth';
@@ -13,6 +12,6 @@ export const registerUser = (body, cb) => async dispatch => {
     return await registerUserRequest(body, dispatch, cb);
 };
 
-export const isLoggedIn = (token, cb) => async dispatch => {
+export const isLoggedIn = (token, cb = null) => async dispatch => {
     return await isLoggedInRequest(token, dispatch, cb);
 }

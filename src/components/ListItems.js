@@ -8,7 +8,6 @@ import Badge from '@material-ui/core/Badge';
 import ChatIcon from '@material-ui/icons/Chat';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import ViewStreamIcon from '@material-ui/icons/ViewStream';
-import LayersIcon from '@material-ui/icons/Layers';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 
 

@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import validator from 'validator';
 import { 
     Avatar, Button, CssBaseline, TextField,
     FormControlLabel,Checkbox,Link,Paper,Grid,Typography
 } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import { withStyles, makeStyles, ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { makeStyles, ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import signupbg from '../assets/signupbg.jpg';
 import Cookies from 'universal-cookie';
 import { useSelector, useDispatch } from 'react-redux';

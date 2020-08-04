@@ -3,6 +3,8 @@ import { Paper, Grid, Typography, Input, InputAdornment, Chip, Tooltip  } from '
 import { Send } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
+import _ from 'lodash';
+import socket from '../../socket';
 import clsx from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
@@ -39,17 +41,35 @@ const useStyles = makeStyles((theme) => ({
         width: '25vw'
     }
 }));
-const ChatBox = ({ activeUser }) => {
+const ChatBox = () => {
     const [chats, setChats] = useState([]);
     const [message, setMessage] = useState('');
-    const currentChat = useSelector((state) => state.chat.currentChat);
+    const { currentChat, selected } = useSelector((state) => state.chat);
+    const activeUser = useSelector(state => state.user.activeUser);
     const chatBox = useRef(null);
+    socket.on('receiveMessage', (from, to, content) => {
+        setChats([
+            ...chats,
+            {
+                from,
+                to,
+                content,
+                date: new Date().toLocaleString()
+            }
+        ]);
+    });
     useEffect(() => {
         const scroll =
             chatBox.current.scrollHeight -
             chatBox.current.clientHeight;
         chatBox.current.scrollTo(0, scroll);
     }, [chats]);
+    const headerName = () => {
+        if (_.isEmpty(currentChat)) {
+            return '';
+        }
+        return currentChat.user.userName;
+    }
     const fillChatBox = () => {
         const chatsList = [];
         for (const chat of chats) {
@@ -59,7 +79,6 @@ const ChatBox = ({ activeUser }) => {
                     <Tooltip title={chat.date} placement='right'>
                         <Chip
                             className={classes.messageBox}
-                            
                             label={chat.content}
                         />
                     </Tooltip>
@@ -70,16 +89,19 @@ const ChatBox = ({ activeUser }) => {
     }
     const keyPress = e => {
         if (e.keyCode === 13) {
-            console.log('value', e.target.value);
+            const newMessage = {
+                content: e.target.value,
+                from: activeUser._id,
+                to: currentChat.chatId,
+                date: new Date().toLocaleString()
+            };
             setChats([
                 ...chats,
-                {
-                    content: e.target.value,
-                    id: new Date().getTime(),
-                    date: new Date().toLocaleString()
-                }
+                newMessage
             ]);
+            console.log(newMessage);
             setMessage('');
+            socket.emit('sendMessage', newMessage);
         }
     }
     const classes = useStyles();
@@ -90,7 +112,9 @@ const ChatBox = ({ activeUser }) => {
                     <React.Fragment>
                         <Grid item xs={12}>
                             <Paper className={clsx(classes.box, classes.header)}>
-                                <Typography variant="h6">{currentChat.userName}</Typography>
+                                <Typography variant="h6">
+                                    {headerName()}
+                                </Typography>
                             </Paper>
                         </Grid>
                     </React.Fragment>
@@ -109,6 +133,9 @@ const ChatBox = ({ activeUser }) => {
                         <Grid item xs={12}>
                             <Paper elevation={0} className={clsx(classes.box, classes.inputBox)}>
                                 <Input
+                                    disabled={
+                                        !selected
+                                    }
                                     value={message}
                                     fullWidth
                                     id="input-with-icon-adornment"
