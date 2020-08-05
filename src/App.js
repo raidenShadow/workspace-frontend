@@ -1,6 +1,6 @@
 import React from 'react';
 import Login from './components/Login';
-import Dashboard from './components/Dashboard';
+import Dashboard from './components/Dashboard/Dashboard';
 import Register from './components/Register';
 import { Provider } from 'react-redux';
 import store from './store';

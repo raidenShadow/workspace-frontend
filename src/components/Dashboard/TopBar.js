@@ -1,37 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
-import { makeStyles, createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Drawer from '@material-ui/core/Drawer';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
-import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import { mainListItems, secondaryListItems } from './ListItems';
-import { useDispatch, useSelector } from 'react-redux';
-import { isLoggedIn } from '../actions/userActions';
-import Cookies from 'universal-cookie';
-import _ from 'lodash';
+import { makeStyles } from '@material-ui/core/styles';
+import { 
+    AppBar, Toolbar, IconButton, Typography, Badge,
+    Divider, List, Drawer
+} from '@material-ui/core';
+import { Menu as MenuIcon, Notifications as NotificationsIcon, ChevronLeft as ChevronLeftIcon } from '@material-ui/icons';
+import ListItems from './ListItems';
 
-import Chat from './Chat/Chat';
-import socket from '../socket';
-
-const theme = createMuiTheme({
-    palette: {
-        type: "light"
-    }
-});
-
-const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -116,10 +92,9 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function Dashboard() {
-    const dispatch = useDispatch();
-    const activeUser = useSelector(state => state.user.activeUser);
-    const cookies = new Cookies();
+const drawerWidth = 240;
+
+const TopBar = () => {
     const classes = useStyles();
     const [open, setOpen] = useState(true);
     const handleDrawerOpen = () => {
@@ -128,21 +103,8 @@ function Dashboard() {
     const handleDrawerClose = () => {
         setOpen(false);
     };
-
-    useEffect(() => {
-        dispatch(
-            isLoggedIn(cookies.get('Authorization'))
-        );
-    }, []);
-    useEffect(() => {
-        if (!_.isEmpty(activeUser)) {
-            socket.emit('connected', activeUser._id);
-        }
-    }, [activeUser]);
     return (
-        <ThemeProvider theme={theme}>
-        <div className={classes.root}>
-            <CssBaseline />
+        <React.Fragment>
             <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
                 <Toolbar className={classes.toolbar}>
                     <IconButton
@@ -156,7 +118,7 @@ function Dashboard() {
                     </IconButton>
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                         Dashboard
-          </Typography>
+                        </Typography>
                     <IconButton color="inherit">
                         <Badge badgeContent={4} color="primary">
                             <NotificationsIcon />
@@ -177,38 +139,13 @@ function Dashboard() {
                     </IconButton>
                 </div>
                 <Divider />
-                <List>{mainListItems()}</List>
-                <Divider />
-                <List>{secondaryListItems}</List>
+                <List>
+                    <ListItems />
+                </List>
             </Drawer>
-            <main className={classes.content}>
-                <div className={classes.appBarSpacer} />
-                <Container maxWidth="lg" className={classes.container}>
-                        <Grid container spacing={3}>
-                            {/* Chart 
-                            <Grid item xs={12} md={8} lg={9}>
-                                <Paper className={fixedHeightPaper}>
-                                    <Chart />
-                                </Paper>
-                                </Grid>*/}
-                            {/* Recent Deposits */}
-                            {/*<Grid item xs={12} md={4} lg={3}>
-                                <Paper className={fixedHeightPaper}>
-                                    <Deposits />
-                                </Paper>
-                            </Grid>*/}
-                            {/* Recent Orders */}
-                            <Grid item xs={12}>
-                                <Paper className={classes.paper}>
-                                    <Chat />
-                                </Paper>
-                            </Grid>
-                        </Grid>
-                </Container>
-            </main>
-        </div>
-        </ThemeProvider>
+        </React.Fragment>
     );
 }
 
-export default Dashboard;
+
+export default TopBar;

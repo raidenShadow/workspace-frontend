@@ -2,7 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Paper, Grid, Typography, Input, InputAdornment, Chip, Tooltip  } from '@material-ui/core'; 
 import { Send } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { getMessages } from '../../actions/chatActions';
+import Cookies from 'universal-cookie';
 import _ from 'lodash';
 import socket from '../../socket';
 import clsx from 'clsx';
@@ -42,19 +44,21 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 const ChatBox = () => {
+    const cookies = new Cookies();
+    const dispatch = useDispatch();
     const [chats, setChats] = useState([]);
     const [message, setMessage] = useState('');
-    const { currentChat, selected } = useSelector((state) => state.chat);
+    const { currentChat, messages } = useSelector((state) => state.chat);
     const activeUser = useSelector(state => state.user.activeUser);
     const chatBox = useRef(null);
-    socket.on('receiveMessage', (from, to, content) => {
+    socket.on('receiveMessage', (from, to, content, date) => {
         setChats([
             ...chats,
             {
                 from,
                 to,
                 content,
-                date: new Date().toLocaleString()
+                date: new Date()
             }
         ]);
     });
@@ -64,6 +68,24 @@ const ChatBox = () => {
             chatBox.current.clientHeight;
         chatBox.current.scrollTo(0, scroll);
     }, [chats]);
+    useEffect(() => {
+        if (!_.isEmpty(messages)) {
+            setChats([
+                ...chats,
+                ...messages
+            ]);
+        }
+    }, [messages]);
+    useEffect(() => { 
+        if (!_.isEmpty(currentChat)) {
+            dispatch(
+                getMessages({ 
+                    token: cookies.get('Authorization'),
+                    chatId: currentChat.chatId
+                })
+            );
+        }
+    }, [currentChat]);
     const headerName = () => {
         if (_.isEmpty(currentChat)) {
             return '';
@@ -76,7 +98,7 @@ const ChatBox = () => {
             const style = chat.from === activeUser._id ? 'rtl' : 'ltr';
             chatsList.push(
                 <Grid dir={style} key={chat.id} item>
-                    <Tooltip title={chat.date} placement='right'>
+                    <Tooltip title={chat.date.toLocaleString()} placement='right'>
                         <Chip
                             className={classes.messageBox}
                             label={chat.content}
@@ -93,7 +115,7 @@ const ChatBox = () => {
                 content: e.target.value,
                 from: activeUser._id,
                 to: currentChat.chatId,
-                date: new Date().toLocaleString()
+                date: new Date()
             };
             setChats([
                 ...chats,
@@ -134,7 +156,7 @@ const ChatBox = () => {
                             <Paper elevation={0} className={clsx(classes.box, classes.inputBox)}>
                                 <Input
                                     disabled={
-                                        !selected
+                                        _.isEmpty(chats)
                                     }
                                     value={message}
                                     fullWidth

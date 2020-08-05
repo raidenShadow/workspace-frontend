@@ -1,4 +1,5 @@
 import types from '../actions/types';
+import { fetchData } from '../utils/fetch';
 
 export const loginRequest = async (loginData, dispatch, cb) => {
     const requestOptions = {
@@ -10,8 +11,10 @@ export const loginRequest = async (loginData, dispatch, cb) => {
         redirect: 'follow'
     }
     try {
-        const response = await fetch('http://185.211.59.101:8080/user/login', requestOptions);
-        const result = await response.json();
+        const { result, response } = await fetchData({
+            URL: 'http://185.211.59.101:8080/user/login',
+            requestOptions
+        });
         if (response.status !== 200) {
             throw new Error("Couldn't Log in");
         }
@@ -42,8 +45,10 @@ export const registerUserRequest = async (body, dispatch, cb) => {
         redirect: 'follow'
     }
     try {
-        const response = await fetch('http://185.211.59.101:8080/user/register', requestOptions);
-        const result = await response.json();
+        const { result, response } = await fetchData({
+            URL: 'http://185.211.59.101:8080/user/register',
+            requestOptions
+        });
         if (response.status !== 201) {
             throw new Error("Couldn't register!");
         }
@@ -77,8 +82,10 @@ export const isLoggedInRequest = async(token, dispatch, cb = null) => {
         redirect: 'follow'
     };
     try {
-        const response = await fetch('http://185.211.59.101:8080/user/is-logged-in', requestOptions);
-        const result = await response.json();
+        const { result, response } = await fetchData({
+            URL: 'http://185.211.59.101:8080/user/is-logged-in',
+            requestOptions
+        });
         if (response.status !== 200) {
             throw new Error('Not logged in before');
         }
@@ -87,6 +94,7 @@ export const isLoggedInRequest = async(token, dispatch, cb = null) => {
         }
         return dispatch(isLoggedInSuccess(result.user));
     } catch (err) {
+        cb(null);
         return dispatch(isLoggedInFailed(err));
     }
 }

@@ -1,5 +1,5 @@
 import types from './types';
-import { addChatRequest, chatListRequest } from '../middlewares/chatAsync';
+import { addChatRequest, chatListRequest, getMessagesRequest } from '../middlewares/chatAsync';
 
 export const selectChat = chatData => dispatch => {
     dispatch({
@@ -11,3 +11,5 @@ export const selectChat = chatData => dispatch => {
 export const addChat = (input, token) => async dispatch => await addChatRequest(input, token, dispatch);
 
 export const getChats = token => async dispatch => await chatListRequest(token, dispatch);
+
+export const getMessages = input => async dispatch => await getMessagesRequest(input, dispatch);

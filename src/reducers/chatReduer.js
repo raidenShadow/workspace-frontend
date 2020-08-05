@@ -3,7 +3,8 @@ import types from '../actions/types';
 const initialState = {
     selected: false,
     currentChat: {},
-    chatsList: []
+    chatsList: [],
+    messages: []
 };
 
 export default function (state = initialState, action) {
@@ -30,6 +31,13 @@ export default function (state = initialState, action) {
                 ]
             }
         case types.ADD_CHAT_FAILED:
+            return state;
+        case types.GET_MESSAGES_SUCCESS:
+            return {
+                ...state,
+                messages: action.payload
+            };
+        case types.GET_MESSAGES_FAILED:
             return state;
         default:
             return state;
