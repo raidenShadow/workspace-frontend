@@ -20,7 +20,7 @@ const ChatsList = ({ filter }) => {
         const found = chats.find(({ user: { userName } }) => userName.toLowerCase() === title.toLowerCase());
         dispatch(
             selectChat(found)
-        );
+            );
     }
     useEffect(() => {
         setChats(chatsList);
@@ -63,7 +63,7 @@ const ChatsList = ({ filter }) => {
                         secondary={
                             <React.Fragment>
                                 <Typography noWrap={true}>
-                                    {chat.latestMessage}
+                                    {chat.latestMessage.content}
                                 </Typography>
                             </React.Fragment>
                         }

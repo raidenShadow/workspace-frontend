@@ -122,9 +122,9 @@ function Dashboard({ history }) {
     useEffect(() => {
         dispatch(
             isLoggedIn(cookies.get('Authorization'), (input) => {
-                if (!input) {
-                    history.push('/');
-                }
+                // if (input) {
+                    // history.push('/');
+                // }
             })
         );
     }, []);

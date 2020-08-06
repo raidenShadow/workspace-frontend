@@ -50,7 +50,7 @@ export const chatListRequest = async (token, dispatch) => {
             URL: 'http://185.211.59.101:8080/chat/all',
             requestOptions
         });
-        if (response.status !== 201) { // Status code gonna get changed
+        if (response.status !== 200) { // Status code gonna get changed
             throw new Error("Couldn't find any chat");
         }
         dispatch(chatListSuccess(result));
@@ -71,16 +71,15 @@ const chatListFailed = err => ({
 
 export const getMessagesRequest = async ({ token, chatId }, dispatch) => {
     const requestOptions = {
-        method: 'POST',
+        method: 'GET',
         headers: {
             'Authorization': token
         },
-        body: JSON.stringify({ chatId }),
         redirect: 'follow'
     };
     try {
         const { result, response } = await fetchData({
-            URL: 'sample.com',
+            URL: `http://185.211.59.101:8080/chat/messages/${chatId}`,
             requestOptions
         });
         if (response.status !== 200) {

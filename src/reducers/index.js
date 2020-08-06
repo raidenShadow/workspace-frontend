@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import userReducer from './userReducer';
-import chatReducer from './chatReduer';
+import chatReducer from './chatReducer';
 import dashboardReducer from './dashboardReducer';
 import boardReducer from './boardReducer';
 

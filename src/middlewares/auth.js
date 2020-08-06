@@ -94,7 +94,7 @@ export const isLoggedInRequest = async(token, dispatch, cb = null) => {
         }
         return dispatch(isLoggedInSuccess(result.user));
     } catch (err) {
-        cb(null);
+        // cb(null);
         return dispatch(isLoggedInFailed(err));
     }
 }

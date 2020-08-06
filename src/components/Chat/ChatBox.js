@@ -51,14 +51,14 @@ const ChatBox = () => {
     const { currentChat, messages } = useSelector((state) => state.chat);
     const activeUser = useSelector(state => state.user.activeUser);
     const chatBox = useRef(null);
-    socket.on('receiveMessage', (from, to, content, date) => {
+    socket.on('receiveMessage', ({from, to, content, date}) => {
         setChats([
             ...chats,
             {
                 from,
                 to,
                 content,
-                date: new Date()
+                date: date.toLocaleString()
             }
         ]);
     });
@@ -70,14 +70,11 @@ const ChatBox = () => {
     }, [chats]);
     useEffect(() => {
         if (!_.isEmpty(messages)) {
-            setChats([
-                ...chats,
-                ...messages
-            ]);
+            setChats(messages);
         }
     }, [messages]);
     useEffect(() => { 
-        if (!_.isEmpty(currentChat)) {
+        if (!_.isEmpty(currentChat) && _.isEmpty(messages)) {
             dispatch(
                 getMessages({ 
                     token: cookies.get('Authorization'),
@@ -95,10 +92,15 @@ const ChatBox = () => {
     const fillChatBox = () => {
         const chatsList = [];
         for (const chat of chats) {
+            if (chat.hasOwnProperty('createdAt')) {
+                chat.date = chat.createdAt;
+            }
             const style = chat.from === activeUser._id ? 'rtl' : 'ltr';
             chatsList.push(
                 <Grid dir={style} key={chat.id} item>
-                    <Tooltip title={chat.date.toLocaleString()} placement='right'>
+                    <Tooltip title={
+                        chat.date.toLocaleString()
+                    } placement='right'>
                         <Chip
                             className={classes.messageBox}
                             label={chat.content}
