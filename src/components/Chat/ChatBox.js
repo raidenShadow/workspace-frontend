@@ -3,7 +3,7 @@ import { Paper, Grid, Typography, Input, InputAdornment, Chip, Tooltip  } from '
 import { Send } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
-import { getMessages } from '../../actions/chatActions';
+import { getMessages, updateLatestMessage } from '../../actions/chatActions';
 import Cookies from 'universal-cookie';
 import _ from 'lodash';
 import socket from '../../socket';
@@ -61,6 +61,9 @@ const ChatBox = () => {
                 date: date.toLocaleString()
             }
         ]);
+        dispatch(
+            updateLatestMessage(content)
+        );
     });
     useEffect(() => {
         const scroll =
@@ -123,9 +126,11 @@ const ChatBox = () => {
                 ...chats,
                 newMessage
             ]);
-            console.log(newMessage);
             setMessage('');
             socket.emit('sendMessage', newMessage);
+            dispatch(
+                updateLatestMessage(newMessage.content)
+            );
         }
     }
     const classes = useStyles();

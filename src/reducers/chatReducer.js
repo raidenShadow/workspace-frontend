@@ -39,6 +39,17 @@ export default function (state = initialState, action) {
             };
         case types.GET_MESSAGES_FAILED:
             return state;
+        case types.UPDATE_LATEST_MESSAGE:
+            return {
+                ...state,
+                currentChat: {
+                    ...state.currentChat,
+                    latestMessage: {
+                        ...state.currentChat.latestMessage,
+                        content: action.payload
+                    }
+                }
+            }
         default:
             return state;
     }

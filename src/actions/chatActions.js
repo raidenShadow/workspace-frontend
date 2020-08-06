@@ -8,6 +8,11 @@ export const selectChat = chatData => dispatch => {
     });
 };
 
+export const updateLatestMessage = input => dispatch => dispatch({
+    type: types.UPDATE_LATEST_MESSAGE,
+    paylaod: input
+});
+
 export const addChat = (input, token) => async dispatch => await addChatRequest(input, token, dispatch);
 
 export const getChats = token => async dispatch => await chatListRequest(token, dispatch);
